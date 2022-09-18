@@ -13,12 +13,20 @@ public class ItemMethods implements GoodsMethods {
         this.url = url;
         this.user = user;
         this.password = password;
+        try (Connection ignored = DriverManager.getConnection(url, user, password)) {
+            this.url = url;
+            this.user = user;
+            this.password = password;
+            System.out.println("Login data are OK");
+        } catch (SQLException e) {
+            System.out.println("Connection to SQL was not successful");
+        }
     }
 
 
     @Override
     public Item loadItemById(Integer id) {
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
+        try (Connection con = connect()) {
             Statement statement = con.createStatement();
             statement.executeQuery("SELECT * FROM items WHERE iditems = " + id);
             ResultSet result = statement.getResultSet();
@@ -37,7 +45,7 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void deleteAllOutOfStockItems() {
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
+        try (Connection con = connect()) {
             Statement statement = con.createStatement();
             statement.executeUpdate("DELETE FROM items WHERE numberInStock = 0;");
         }
@@ -49,7 +57,7 @@ public class ItemMethods implements GoodsMethods {
     @Override
     public List<Item> loadAllAvailableItems() {
         List<Item> listOfItems = new ArrayList<>();
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
+        try (Connection con = connect()) {
             Statement statement = con.createStatement();
             statement.executeQuery("SELECT * FROM items WHERE numberInStock > 0;");
             ResultSet result = statement.getResultSet();
@@ -66,7 +74,7 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void saveItem(Item item) {
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
+        try (Connection con = connect()) {
             Statement statement = con.createStatement();
             String insertData = "INSERT INTO items("
                     + "iditems, partNo, serialNo, name, description, numberInStock, price) VALUES "
@@ -82,7 +90,7 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void updatePrice(Integer id, BigDecimal newPrice) {
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
+        try (Connection con = connect()) {
             Statement statement = con.createStatement();
             String insertData = "UPDATE items SET price = " + newPrice + "WHERE iditems = " + id;
             statement.executeUpdate(insertData);
@@ -124,5 +132,9 @@ public class ItemMethods implements GoodsMethods {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Connection connect() throws SQLException {
+        return  DriverManager.getConnection(url, user, password);
     }
 }
