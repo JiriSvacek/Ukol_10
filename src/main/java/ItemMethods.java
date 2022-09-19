@@ -10,9 +10,6 @@ public class ItemMethods implements GoodsMethods {
     private String password;
 
     public ItemMethods(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
         try (Connection ignored = DriverManager.getConnection(url, user, password)) {
             this.url = url;
             this.user = user;
@@ -33,7 +30,7 @@ public class ItemMethods implements GoodsMethods {
             if(result.next()) {
                 return createItem(result);
             } else {
-                System.out.println("Item not found");
+                System.out.print("Item not found, ");
                 return null;
             }
         }
@@ -45,13 +42,9 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void deleteAllOutOfStockItems() {
-        try (Connection con = connect()) {
-            Statement statement = con.createStatement();
-            statement.executeUpdate("DELETE FROM items WHERE numberInStock = 0;");
-        }
-        catch (SQLException e) {
-            System.out.println("Error when deleting items out of stock: " + e);
-        }
+        String errorMsgDeleteOutOfStock = "Error when deleting items out of stock: ";
+        String insertData = "DELETE FROM items WHERE numberInStock = 0";
+        updateTable(insertData, errorMsgDeleteOutOfStock);
     }
 
     @Override
@@ -74,30 +67,20 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void saveItem(Item item) {
-        try (Connection con = connect()) {
-            Statement statement = con.createStatement();
-            String insertData = "INSERT INTO items("
-                    + "iditems, partNo, serialNo, name, description, numberInStock, price) VALUES "
-                    + "( " + item.getId() + ", '" + item.getPartNo() + "', '" + item.getSerialNo()
-                    + "', '" + item.getName() + "', '" + item.getDescription() + "', "
-                    +item.getNumberInStock() + ", " + item.getPrice() + ")";
-            statement.executeUpdate(insertData);
-        }
-        catch (SQLException e) {
-            System.out.println("Error when saving the Items: " + e);
-        }
+        String insertData = "INSERT INTO items("
+                + "iditems, partNo, serialNo, name, description, numberInStock, price) VALUES "
+                + "( " + item.getId() + ", '" + item.getPartNo() + "', '" + item.getSerialNo()
+                + "', '" + item.getName() + "', '" + item.getDescription() + "', "
+                +item.getNumberInStock() + ", " + item.getPrice() + ")";
+        String errorMsgSaveItem = "Error when saving the Items: ";
+        updateTable(insertData, errorMsgSaveItem);
     }
 
     @Override
     public void updatePrice(Integer id, BigDecimal newPrice) {
-        try (Connection con = connect()) {
-            Statement statement = con.createStatement();
-            String insertData = "UPDATE items SET price = " + newPrice + "WHERE iditems = " + id;
-            statement.executeUpdate(insertData);
-        }
-        catch (SQLException e) {
-            System.out.println("Error when updating price: " + e);
-        }
+        String insertData = "UPDATE items SET price = " + newPrice + "WHERE iditems = " + id;
+        String errorMsgUpdatePrice = "Error when updating price: ";
+        updateTable(insertData, errorMsgUpdatePrice);
     }
 
     private Item createItem(ResultSet result) throws SQLException {
@@ -108,6 +91,20 @@ public class ItemMethods implements GoodsMethods {
                 result.getString("description"),
                 result.getInt("numberInStock"),
                 result.getBigDecimal("price"));
+    }
+
+    private Connection connect() throws SQLException {
+        return  DriverManager.getConnection(url, user, password);
+    }
+
+    private void updateTable(String sqlCommand, String errorMessage) {
+        try (Connection con = connect()) {
+            Statement statement = con.createStatement();
+            statement.executeUpdate(sqlCommand);
+        }
+        catch (SQLException e) {
+            System.out.println(errorMessage + e);
+        }
     }
 
     public String getUrl() {
@@ -132,9 +129,5 @@ public class ItemMethods implements GoodsMethods {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Connection connect() throws SQLException {
-        return  DriverManager.getConnection(url, user, password);
     }
 }
