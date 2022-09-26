@@ -42,8 +42,8 @@ public class ItemMethods implements GoodsMethods {
     @Override
     public void deleteAllOutOfStockItems() throws ItemMethodsExceptions {
         String errorMsgDeleteOutOfStock = "Error when deleting items out of stock: ";
-        String insertData = "DELETE FROM items WHERE numberInStock = 0";
-        updateTable(insertData, errorMsgDeleteOutOfStock);
+        String deleteData = "DELETE FROM items WHERE numberInStock = 0";
+        updateTable(deleteData, errorMsgDeleteOutOfStock);
     }
 
     @Override
@@ -93,9 +93,9 @@ public class ItemMethods implements GoodsMethods {
 
     @Override
     public void updatePrice(Integer id, BigDecimal newPrice) throws ItemMethodsExceptions {
-        String insertData = "UPDATE items SET price = " + newPrice + "WHERE iditems = " + id;
+        String updateData = "UPDATE items SET price = " + newPrice + "WHERE iditems = " + id;
         String errorMsgUpdatePrice = "Error when updating price: ";
-        updateTable(insertData, errorMsgUpdatePrice);
+        updateTable(updateData, errorMsgUpdatePrice);
     }
 
     private Item createItem(ResultSet result) throws SQLException {
