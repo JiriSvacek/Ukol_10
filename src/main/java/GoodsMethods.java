@@ -14,7 +14,7 @@ public interface GoodsMethods {
 
      */
 
-    Item loadItemById(Integer id);
+    Item loadItemById(Integer id) throws ItemMethodsExceptions;
 
     /**
 
@@ -22,7 +22,7 @@ public interface GoodsMethods {
 
      */
 
-    void deleteAllOutOfStockItems();
+    void deleteAllOutOfStockItems() throws ItemMethodsExceptions;
 
     /**
 
@@ -32,7 +32,7 @@ public interface GoodsMethods {
 
      */
 
-    List<Item> loadAllAvailableItems();
+    List<Item> loadAllAvailableItems() throws ItemMethodsExceptions;
 
     /**
 
@@ -42,7 +42,7 @@ public interface GoodsMethods {
 
      */
 
-    void saveItem(Item item);
+    void saveItem(Item item) throws ItemMethodsExceptions;
 
     /**
 
@@ -54,7 +54,7 @@ public interface GoodsMethods {
 
      */
 
-    void updatePrice(Integer id, BigDecimal newPrice);
+    void updatePrice(Integer id, BigDecimal newPrice) throws ItemMethodsExceptions;
 
 }
 

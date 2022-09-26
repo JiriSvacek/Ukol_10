@@ -15,6 +15,7 @@ public class Item {
     private Integer numberInStock;
 
     private BigDecimal price;
+    private boolean alreadyExecuted = false;
 
     @Override
     public String toString() {
@@ -26,7 +27,10 @@ public class Item {
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        if(!alreadyExecuted) {
+            this.id = id;
+            alreadyExecuted = true;
+        }
     }
 
     public String getPartNo() {
@@ -77,8 +81,7 @@ public class Item {
         this.price = price;
     }
 
-    public Item(Integer id, String partNo, String serialNo, String name, String description, Integer numberInStock, BigDecimal price) {
-        this.id = id;
+    public Item(String partNo, String serialNo, String name, String description, Integer numberInStock, BigDecimal price) {
         this.partNo = partNo;
         this.serialNo = serialNo;
         this.name = name;
